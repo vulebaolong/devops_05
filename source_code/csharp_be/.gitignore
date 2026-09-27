@@ -1,0 +1,17 @@
+bin/
+obj/
+
+.vs/
+.vscode/
+
+*.user
+*.suo
+
+.DS_Store
+# Environment
+.env
+!.env.example
+
+# Build output
+bin/
+obj/

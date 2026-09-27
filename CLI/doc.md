@@ -95,4 +95,20 @@ tail -f
 
 # /dev/null
 # thùng rác, hố đen
+
+apt update && apt install vim
+# -y: tự động chọn yes
+
+vim TEN_FILE
+
+:wq
+# w: write (save)
+# q: quit
+
+:q!
+# thoát và không sửa
+
+# xoá nhanh tất cả
+gg: đưa trỏ chuột lên trên đầu
+dG: xoá tất cả đằng sau chỏ chuột
 ```
