@@ -96,8 +96,9 @@ tail -f
 # /dev/null
 # thùng rác, hố đen
 
-apt update && apt install vim
+apt update && apt install -y vim
 # -y: tự động chọn yes
+# ERROR: permission deined => thêm sudo ở đầu "sudo apt update && sudo apt install vim"
 
 vim TEN_FILE
 
