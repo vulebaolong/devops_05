@@ -130,7 +130,16 @@ docker run --rm -v database_restore:/restore_volume -v $(pwd):/restore_mount ubu
 docker run --name database_new -e POSTGRES_PASSWORD=12345 -d -v database_restore:/var/lib/postgresql postgres:18
 ```
 
+## Tối ưu image
+### Tối ưu tốc độ build image
+- tận dụng cache của docker
+### Tối ưu dung lượng build image
+- dùng stage
+- tạo ra 1 môi trường máy mới
+- và chỉ mang qua những file cần thiết để run
+
+## Clear rác, dọn dẹp
+
 ## Compose
 
-<!-- Tối ưu tốc độ build image -->
-<!-- Tối ưu dung lượng build image -->
+
