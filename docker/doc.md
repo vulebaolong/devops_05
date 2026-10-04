@@ -139,6 +139,10 @@ docker run --name database_new -e POSTGRES_PASSWORD=12345 -d -v database_restore
 - và chỉ mang qua những file cần thiết để run
 
 ## Clear rác, dọn dẹp
+```bash
+docker image prune -f
+docker builder prune -f
+```
 
 ## Compose
 

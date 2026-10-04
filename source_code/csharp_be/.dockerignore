@@ -1,0 +1,6 @@
+obj
+*.http
+appsettings.Development.json
+.env
+Dockerfile
+.dockerignore
