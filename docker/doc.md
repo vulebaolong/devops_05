@@ -82,7 +82,7 @@ docker volume create [NETWORK_NAME]
 docker volume remove [NETWORK_NAME]
 
 docker volume create database_volumne
-docker run --name database -e POSTGRES_PASSWORD=12345 -d -v database_volume:/var/lib/postgresql postgres:18
+docker run --name database -e POSTGRES_PASSWORD=12345 -d -v database_volume:/var/lib/postgresql -p 5432:5432  postgres:18
 
 # tạo dữ liệu
 psql -U postgres
@@ -140,6 +140,9 @@ docker run --name database_new -e POSTGRES_PASSWORD=12345 -d -v database_restore
 
 ## Clear rác, dọn dẹp
 ```bash
+docker system df -v
+# verbose: xem chi tiết hơn
+
 docker image prune -f
 docker builder prune -f
 ```
