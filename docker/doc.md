@@ -149,4 +149,86 @@ docker builder prune -f
 
 ## Compose
 
+- healthcheck
+- logging
+- limit
+- scale
 
+```bash
+docker compose up -d
+docker compose up -d --force-recreate go_gin_be
+# Running: không có gì thay đổi, bỏ qua
+# Started: phát hiện có mới, chạy mới, chạy thành công
+# Created: tạo được container nhưng chưa chạy
+# Recreated: stop xong tạo lại
+
+docker compose down
+docker compose down fe_be
+
+# kiểm tra xem đọc đúng file docker compose hay
+docker compose config
+docker compose config --services
+docker compose config --images
+
+# kiểm tra file docker-compose có hợp lệ hay không
+# đảm bảo những lệnh sau tương tác với file docker compose sẽ không có lỗi
+# thường sử dụng trước khi chạy docker compose up -d
+docker compose config --quiet 
+
+docker logs go_gin_be
+docker logs go_gin_be -f
+# -f: xem real time
+```
+
+```yaml
+healthcheck:
+    test: ["CMD", "pg_isready", "--host", "localhost"]
+    interval: 5s
+    timeout: 3s
+    retries: 10
+    start_period: 10s
+```
+`test`: lệnh check
+`interval`: cứ 5s chạy lệnh test 1 lần
+`timeout`: gọi lệnh check quá 3s => timeout
+`retries`: bị liên tiếp 10 lần => unhealthy
+`start_period`: cho 1 khoảng 10s lúc đầu để database có thời gian khởi đông
+
+`(health: starting)`: đang chuẩn bị
+`(healthy)`: kiểm tra thành công
+`(unhealthy)`: kiểm tra thất bại
+- thời gian:
+    10s đầu + (5s * 10) = ~ 60s
+
+## logging
+
+nếu mà docker chạy trên máy tính cá nhân, thì nó sẽ chạy trong môi trường ảo hoá
+nên file log nằm trong môi trường ảo hoá, coi được nhưng phức tạp
+Còn nếu khi lên server thật EC2 AWS, không có có môi trường ảo hoá, xem file log rất dễ
+
+```yaml
+logging:
+    driver: "json-file"
+        options:
+            max-size: "10m"
+            max-file: "5"
+```
+- max-file: tối đa bao nhiêu file, áp dụng xoay vòng
+- max-size: tôi đa dung lượng để tạo file mới
+
+```yaml
+deploy:
+    resources:
+    limits:
+        cpus: "0.5"
+        memory: 512M
+    reservations:
+        cpus: "0.25"
+        memory: 256M
+```
+
+## scale
+```bash
+docker compose up -d --scale app=3
+docker compose restart gateway
+```

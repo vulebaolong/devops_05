@@ -1,10 +1,195 @@
-service:
+services:
+  # docker run --name database -e POSTGRES_PASSWORD=12345 -d -v database_volume:/var/lib/postgresql -p 5432:5432  postgres:18
+  database:
+    image: postgres:18
+    container_name: database
+    ports:
+      - 5432:5432
+    volumes:
+      - database_volume:/var/lib/postgresql
+    environment:
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: [ "CMD", "pg_isready", "--host", "localhost" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: "100m"
+    #     max-file: "100"
+
+    # docker run --name csharp_be -d -p 8001:8080 --env-file=.env csharp_be_img
   csharp_be:
-  csharp_be:
-  csharp_be:
-  csharp_be:
-  csharp_be:
+    depends_on:
+      database:
+        condition: service_healthy
+    image: csharp_be_img
+    container_name: csharp_be
+    ports:
+      - 8001:8080
+    env_file:
+      - ../csharp_be/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # docker run --name go_gin_be -d -p 8002:8080 --env-file=.env go_gin_be_img
+  go_gin_be:
+    depends_on:
+      database:
+        condition: service_healthy
+    image: go_gin_be_img
+    container_name: go_gin_be
+    ports:
+      - 8002:8080
+    env_file:
+      - ../go_gin_be/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  #  docker run --name java_be -d -p 8003:8080 --env-file=.env java_be_img
+  java_be:
+    depends_on:
+      database:
+        condition: service_healthy
+    image: java_be_img
+    container_name: java_be
+    ports:
+      - 8003:8080
+    env_file:
+      - ../java_be/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # docker run --name js_nestjs -d -p 8004:3000 --env-file=.env js_nestjs_img
+  js_nestjs:
+    depends_on:
+      database:
+        condition: service_healthy
+    image: js_nestjs_img
+    container_name: js_nestjs
+    ports:
+      - 8004:3000
+    env_file:
+      - ../js_nestjs/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # docker run --name python_flask_be -d -p 8005:8080 --env-file=.env python_flask_be_img
+  python_flask_be:
+    depends_on:
+      database:
+        condition: service_healthy
+    image: python_flask_be_img
+    container_name: python_flask_be
+    ports:
+      - 8005:8080
+    env_file:
+      - ../python_flask_be/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # docker run --name js_react_vite -d -p 3001:80 js_react_vite_img
+  js_react_vite:
+    image: js_react_vite_img
+    container_name: js_react_vite
+    ports:
+      - 3001:80
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # docker run --name html -d -p 3002:80 html_img
+  html:
+    image: html_img
+    container_name: html
+    ports:
+      - 3002:80
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # docker run --name js_nextjs -d -p 12345:3000 js_nextjs_img
+  js_nextjs:
+    image: js_nextjs_img
+    container_name: js_nextjs
+    ports:
+      - 3003:3000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # docker run --name fe_be -d -p 3003:80 -p 8006:8080 fe_be_img
+  fe_be:
+    image: fe_be_img
+    container_name: fe_be
+    ports:
+      - 3004:80
+      - 8006:8080
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  app:
+    image: node:24-alpine
+    working_dir: /app
+    command: node demo_scale.js
+    volumes:
+      - ../scale/demo_scale.js:/app/demo_scale.js
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  gateway:
+    depends_on: 
+      - app
+    image: nginx:alpine
+    container_name: gateway
+    ports:
+      - 3005:80
+    volumes:
+      - ../scale/nginx_demo_scale.conf:/etc/nginx/nginx.conf
 
 volumes:
+  database_volume:
+    # false (default): linh hoạt, nếu volume chưa tồn tại thì tạo mới, có rồi thì thôi
+    # true: ép buộc, phải có volume rồi
+    external: false
+    name: database_volume
 
-networks:
+# networks:
