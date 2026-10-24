@@ -143,47 +143,47 @@ services:
         max-file: "5"
 
   # docker run --name fe_be -d -p 3003:80 -p 8006:8080 fe_be_img
-  fe_be:
-    image: fe_be_img
-    container_name: fe_be
-    ports:
-      - 3004:80
-      - 8006:8080
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512M
-        reservations:
-          cpus: "0.25"
-          memory: 256M
+  # fe_be:
+  #   image: fe_be_img
+  #   container_name: fe_be
+  #   ports:
+  #     - 3004:80
+  #     - 8006:8080
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "5"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.5"
+  #         memory: 512M
+  #       reservations:
+  #         cpus: "0.25"
+  #         memory: 256M
 
-  app:
-    image: node:24-alpine
-    working_dir: /app
-    command: node demo_scale.js
-    volumes:
-      - ../scale/demo_scale.js:/app/demo_scale.js
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
+  # app:
+  #   image: node:24-alpine
+  #   working_dir: /app
+  #   command: node demo_scale.js
+  #   volumes:
+  #     - ../scale/demo_scale.js:/app/demo_scale.js
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "5"
 
-  gateway:
-    depends_on: 
-      - app
-    image: nginx:alpine
-    container_name: gateway
-    ports:
-      - 3005:80
-    volumes:
-      - ../scale/nginx_demo_scale.conf:/etc/nginx/nginx.conf
+  # gateway:
+  #   depends_on: 
+  #     - app
+  #   image: nginx:alpine
+  #   container_name: gateway
+  #   ports:
+  #     - 3005:80
+  #   volumes:
+  #     - ../scale/nginx_demo_scale.conf:/etc/nginx/nginx.conf
 
 volumes:
   database_volume:
