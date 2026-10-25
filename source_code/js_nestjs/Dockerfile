@@ -24,4 +24,5 @@ CMD ["node", "dist/main.js"]
 
 # docker build -t js_nestjs_img .
 # docker build -t vulebaolong/js_nestjs_img:latest .
+# docker build --platform=linux/amd64 -t vulebaolong/js_nestjs_img:1.0.0 .
 # docker run --name js_nestjs -d -p 8004:3000 --env-file=.env js_nestjs_img
