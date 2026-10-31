@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CI/CD Deployment Notification</title>
+</head>
+
+<body style="
+    margin:0;
+    padding:0;
+    background-color:#f4f6f8;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#1f2937;
+">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background-color:#f4f6f8; padding:40px 15px;">
+
+    <tr>
+        <td align="center">
+
+            <table width="100%"
+                   cellpadding="0"
+                   cellspacing="0"
+                   border="0"
+                   style="
+                       max-width:720px;
+                       background-color:#ffffff;
+                       border-radius:14px;
+                       overflow:hidden;
+                       box-shadow:0 8px 30px rgba(0,0,0,0.08);
+                   ">
+
+                <!-- HEADER -->
+                <tr>
+                    <td style="
+                        background-color:#111827;
+                        padding:32px 40px;
+                    ">
+
+                        <div style="
+                            font-size:13px;
+                            color:#9ca3af;
+                            letter-spacing:1.5px;
+                            text-transform:uppercase;
+                            margin-bottom:8px;
+                        ">
+                            GitHub Actions
+                        </div>
+
+                        <div style="
+                            color:#ffffff;
+                            font-size:28px;
+                            font-weight:700;
+                            line-height:1.3;
+                        ">
+                            CI/CD Pipeline Report
+                        </div>
+
+                        <div style="
+                            color:#d1d5db;
+                            font-size:14px;
+                            margin-top:8px;
+                        ">
+                            Automated workflow notification
+                        </div>
+
+                    </td>
+                </tr>
+
+
+                <!-- STATUS -->
+                <tr>
+                    <td style="padding:32px 40px 10px 40px;">
+
+                        <table cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td style="
+                                    background-color:#dcfce7;
+                                    color:#166534;
+                                    font-size:14px;
+                                    font-weight:700;
+                                    padding:10px 18px;
+                                    border-radius:20px;
+                                ">
+                                    ✓ WORKFLOW SUCCESS
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- TITLE -->
+                <tr>
+                    <td style="padding:16px 40px;">
+
+                        <div style="
+                            font-size:22px;
+                            font-weight:700;
+                            color:#111827;
+                            margin-bottom:10px;
+                        ">
+                            Pipeline completed successfully
+                        </div>
+
+                        <div style="
+                            font-size:15px;
+                            line-height:1.7;
+                            color:#4b5563;
+                        ">
+                            GitHub Actions workflow
+                            <strong>$WORKFLOW_NAME</strong>
+                            của repository
+                            <strong>$REPOSITORY</strong>
+                            đã hoàn thành thành công.
+                        </div>
+
+                    </td>
+                </tr>
+
+
+                <!-- REPOSITORY INFO -->
+                <tr>
+                    <td style="padding:15px 40px;">
+
+                        <div style="
+                            font-size:16px;
+                            font-weight:700;
+                            color:#111827;
+                            margin-bottom:12px;
+                        ">
+                            Repository Information
+                        </div>
+
+
+                        <table width="100%"
+                               cellpadding="0"
+                               cellspacing="0"
+                               style="
+                                   background-color:#f8fafc;
+                                   border:1px solid #e5e7eb;
+                                   border-radius:10px;
+                               ">
+
+                            <tr>
+                                <td style="padding:20px;">
+
+                                    <table width="100%"
+                                           cellpadding="0"
+                                           cellspacing="0">
+
+                                        <tr>
+                                            <td style="
+                                                width:35%;
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Repository
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#111827;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                $REPOSITORY
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Owner
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#111827;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                $REPOSITORY_OWNER
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Branch
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#2563eb;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                $BRANCH
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Git Ref
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#111827;
+                                                font-size:14px;
+                                            ">
+                                                $REF
+                                            </td>
+                                        </tr>
+
+                                    </table>
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- WORKFLOW INFO -->
+                <tr>
+                    <td style="padding:15px 40px;">
+
+                        <div style="
+                            font-size:16px;
+                            font-weight:700;
+                            color:#111827;
+                            margin-bottom:12px;
+                        ">
+                            Workflow Information
+                        </div>
+
+
+                        <table width="100%"
+                               cellpadding="0"
+                               cellspacing="0"
+                               style="
+                                   border:1px solid #e5e7eb;
+                                   border-radius:10px;
+                               ">
+
+                            <tr>
+                                <td style="padding:20px;">
+
+                                    <table width="100%"
+                                           cellpadding="0"
+                                           cellspacing="0">
+
+                                        <tr>
+                                            <td style="
+                                                width:35%;
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Workflow
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                $WORKFLOW_NAME
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Job
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                $JOB_NAME
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Trigger Event
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                $EVENT_NAME
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Triggered By
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                $ACTOR
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Run Number
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                font-size:14px;
+                                                font-weight:600;
+                                            ">
+                                                #$RUN_NUMBER
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Run Attempt
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                font-size:14px;
+                                            ">
+                                                $RUN_ATTEMPT
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td style="
+                                                padding:9px 0;
+                                                color:#6b7280;
+                                                font-size:14px;
+                                            ">
+                                                Run ID
+                                            </td>
+
+                                            <td style="
+                                                padding:9px 0;
+                                                font-size:14px;
+                                            ">
+                                                $RUN_ID
+                                            </td>
+                                        </tr>
+
+                                    </table>
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- COMMIT -->
+                <tr>
+                    <td style="padding:15px 40px;">
+
+                        <div style="
+                            font-size:16px;
+                            font-weight:700;
+                            color:#111827;
+                            margin-bottom:12px;
+                        ">
+                            Commit
+                        </div>
+
+
+                        <table width="100%"
+                               cellpadding="0"
+                               cellspacing="0"
+                               style="
+                                   background-color:#111827;
+                                   border-radius:10px;
+                               ">
+
+                            <tr>
+                                <td style="
+                                    padding:18px;
+                                    color:#e5e7eb;
+                                    font-size:13px;
+                                    font-family:Consolas, Monaco, monospace;
+                                    word-break:break-all;
+                                ">
+                                    $COMMIT_SHA
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- PIPELINE SUMMARY -->
+                <tr>
+                    <td style="padding:15px 40px;">
+
+                        <div style="
+                            font-size:16px;
+                            font-weight:700;
+                            color:#111827;
+                            margin-bottom:12px;
+                        ">
+                            Pipeline Summary
+                        </div>
+
+
+                        <table width="100%"
+                               cellpadding="0"
+                               cellspacing="0">
+
+                            <tr>
+                                <td style="
+                                    padding:12px 0;
+                                    border-bottom:1px solid #e5e7eb;
+                                ">
+
+                                    <span style="
+                                        display:inline-block;
+                                        background-color:#dcfce7;
+                                        color:#15803d;
+                                        width:24px;
+                                        height:24px;
+                                        line-height:24px;
+                                        text-align:center;
+                                        border-radius:50%;
+                                        font-weight:bold;
+                                    ">
+                                        ✓
+                                    </span>
+
+                                    <span style="
+                                        margin-left:10px;
+                                        font-size:14px;
+                                        color:#374151;
+                                    ">
+                                        Source validation completed
+                                    </span>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td style="
+                                    padding:12px 0;
+                                    border-bottom:1px solid #e5e7eb;
+                                ">
+
+                                    <span style="
+                                        display:inline-block;
+                                        background-color:#dcfce7;
+                                        color:#15803d;
+                                        width:24px;
+                                        height:24px;
+                                        line-height:24px;
+                                        text-align:center;
+                                        border-radius:50%;
+                                        font-weight:bold;
+                                    ">
+                                        ✓
+                                    </span>
+
+                                    <span style="
+                                        margin-left:10px;
+                                        font-size:14px;
+                                        color:#374151;
+                                    ">
+                                        Build completed
+                                    </span>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td style="padding:12px 0;">
+
+                                    <span style="
+                                        display:inline-block;
+                                        background-color:#dcfce7;
+                                        color:#15803d;
+                                        width:24px;
+                                        height:24px;
+                                        line-height:24px;
+                                        text-align:center;
+                                        border-radius:50%;
+                                        font-weight:bold;
+                                    ">
+                                        ✓
+                                    </span>
+
+                                    <span style="
+                                        margin-left:10px;
+                                        font-size:14px;
+                                        color:#374151;
+                                    ">
+                                        Workflow finished successfully
+                                    </span>
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- BUTTON -->
+                <tr>
+                    <td align="center"
+                        style="padding:25px 40px 35px 40px;">
+
+                        <a href="$ACTION_URL"
+                           style="
+                               display:inline-block;
+                               background-color:#2563eb;
+                               color:#ffffff;
+                               text-decoration:none;
+                               padding:13px 28px;
+                               border-radius:8px;
+                               font-size:14px;
+                               font-weight:700;
+                           ">
+                            View Workflow Run
+                        </a>
+
+                        &nbsp;
+
+                        <a href="$COMMIT_URL"
+                           style="
+                               display:inline-block;
+                               background-color:#ffffff;
+                               color:#2563eb;
+                               text-decoration:none;
+                               padding:12px 28px;
+                               border-radius:8px;
+                               border:1px solid #2563eb;
+                               font-size:14px;
+                               font-weight:700;
+                           ">
+                            View Commit
+                        </a>
+
+                    </td>
+                </tr>
+
+
+                <!-- NOTICE -->
+                <tr>
+                    <td style="padding:0 40px 32px 40px;">
+
+                        <table width="100%"
+                               cellpadding="0"
+                               cellspacing="0"
+                               style="
+                                   background-color:#eff6ff;
+                                   border-left:4px solid #2563eb;
+                                   border-radius:8px;
+                               ">
+
+                            <tr>
+                                <td style="
+                                    padding:16px 18px;
+                                    font-size:13px;
+                                    line-height:1.6;
+                                    color:#1e3a8a;
+                                ">
+                                    This email was automatically generated by GitHub Actions.
+                                    Please check the workflow if you need to view run details.
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- FOOTER -->
+                <tr>
+                    <td style="
+                        background-color:#f8fafc;
+                        border-top:1px solid #e5e7eb;
+                        padding:24px 40px;
+                        text-align:center;
+                    ">
+
+                        <div style="
+                            font-size:13px;
+                            color:#64748b;
+                        ">
+                            $REPOSITORY
+                        </div>
+
+                        <div style="
+                            font-size:12px;
+                            color:#9ca3af;
+                            margin-top:6px;
+                        ">
+                            CI/CD Automation • Powered by GitHub Actions
+                        </div>
+
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+name: Practice WorkFlow
+
+on:
+    #   push:
+    workflow_dispatch:
+
+jobs:
+    job_check:
+        runs-on: ubuntu-latest
+
+        outputs:
+            job_check_status: ${{ steps.check.outputs.status }}
+
+        steps:
+            - name: Checkout source
+              id: check-source
+              uses: actions/checkout@v7.0.1
+
+            - name: TruffleHog OSS
+              uses: trufflesecurity/trufflehog@v3.99.7
+
+            - name: Check Readme file
+              id: check
+              run: |
+                  ls -la
+                  test -f README.md
+                  echo "status=failed" >> $GITHUB_OUTPUT
+
+            - name: show
+              run: echo ${{ steps.check.outputs.status }}
+
+    job_build:
+        runs-on: ubuntu-latest
+
+        outputs:
+            job_build_status: ${{ steps.output.outputs.status }}
+
+        steps:
+            - name: output
+              id: output
+              run: echo "status=success" >> $GITHUB_OUTPUT
+
+    job_deploy:
+        runs-on: ubuntu-latest
+        needs: [job_check, job_build]
+
+        steps:
+            - name: Checkout source
+              id: check-source
+              uses: actions/checkout@v7.0.1
+
+            - name: TruffleHog OSS
+              uses: trufflesecurity/trufflehog@v3.99.7
+
+            - name: Show status job_check
+              run: echo ${{ needs.job_check.outputs.job_check_status }}
+
+            - name: Show status job_build
+              run: echo ${{ needs.job_build.outputs.job_build_status }}
+
+            - name: Prepaser HTML
+              env:
+                  REPOSITORY: ${{ github.repository }}
+                  REPOSITORY_OWNER: ${{ github.repository_owner }}
+                  BRANCH: ${{ github.ref_name }}
+                  REF: ${{ github.ref }}
+                  COMMIT_SHA: ${{ github.sha }}
+                  ACTOR: ${{ github.actor }}
+                  WORKFLOW_NAME: ${{ github.workflow }}
+                  JOB_NAME: ${{ github.job }}
+                  EVENT_NAME: ${{ github.event_name }}
+                  RUN_ID: ${{ github.run_id }}
+                  RUN_NUMBER: ${{ github.run_number }}
+                  RUN_ATTEMPT: ${{ github.run_attempt }}
+                  SERVER_URL: ${{ github.server_url }}
+                  REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
+                  COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+                  ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  STATUS: success
+              run: envsubst < email-template.html > README.html
+
+            - name: Send mail
+              uses: dawidd6/action-send-mail@v23
+              with:
+                  server_address: smtp.gmail.com
+                  server_port: 465
+                  secure: true
+                  username: vulebaolong@gmail.com
+                  password: lrftnjfglrsdyeyx
+                  subject: Github Actions job result
+                  to: vulebaolong@gmail.com
+                  from: "Anh long <vulebaolong@gmail>"
+                  body: Build job of ${{github.repository}} completed successfully!
+                  html_body: file://README.html
