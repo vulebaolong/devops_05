@@ -1,0 +1,23 @@
+name: Common
+description: common
+
+inputs:
+    ssh-key:
+        required: true
+    ssh-ip:
+        required: true
+
+runs:
+    using: composite
+    steps:
+        - name: TruffleHog OSS
+          uses: trufflesecurity/trufflehog@v3.99.7
+
+        - name: webfactory/ssh-agent
+          uses: webfactory/ssh-agent@v0.10.0
+          with:
+              ssh-private-key: ${{ inputs.ssh-key }}
+
+        - name: Trust Host
+          shell: bash
+          run: ssh-keyscan -H ${{ inputs.ssh-ip }} >> ~/.ssh/known_hosts

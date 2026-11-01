@@ -1,0 +1,74 @@
+name: Deploy Hub Image
+
+on:
+    pull_request: 
+        branches: [main, stating]
+
+env:
+    SSH_SERVER: ${{ secrets.SSH_USER }}@${{ secrets.SSH_IP }}
+    WORK_DIR: /home/ubuntu/devops_05/go_gin_be
+    COMPOSE_FILE_DIR: /home/ubuntu/devops_05
+    COMPOSE_SERVICE: go_gin_be
+    IMAGE_NAME: ${{secrets.DOCKER_USER}}/go_gin_be_img:latest
+
+jobs:
+    job_check:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout source
+              uses: actions/checkout@v7.0.1
+
+            - name: Use Common
+              uses: ./.github/actions
+              with:
+                  ssh-key: ${{ secrets.SSH_KEY }}
+                  ssh-ip: ${{ secrets.SSH_IP }}
+
+            - name: Check Dockerfile file
+              run: test -f Dockerfile
+
+            - name: Check env file
+              run: |
+                  ssh $SSH_SERVER "
+                    set -e
+
+                    cd $WORK_DIR
+                    ls -la
+                    test -f .env
+                  "
+
+            - name: Check docker compose file
+              run: |
+                  ssh $SSH_SERVER "
+                    set -e
+
+                    cd $COMPOSE_FILE_DIR
+                    ls -la
+                    test -f docker-compose.yml
+                  "
+
+    job_build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout source
+              uses: actions/checkout@v7.0.1
+
+            - name: Use Common
+              uses: ./.github/actions
+              with:
+                  ssh-key: ${{ secrets.SSH_KEY }}
+                  ssh-ip: ${{ secrets.SSH_IP }}
+
+            - name: Build Image Docker
+              run: docker build -t $IMAGE_NAME .
+
+            - name: Docker Login
+              run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+
+            - name: Push Image To Docker Hub
+              run: docker push $IMAGE_NAME
+
+
+  
