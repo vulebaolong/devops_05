@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        SSH_IP = credentials('ip-server-run')
+        SSH_AUTH = credentials('ssh-private')
+        // DOCKER_AUTH_USR
+        // DOCKER_AUTH_PSW
+        DOCKER_AUTH = credentials('docker-login')
+
+        GIT_BRANCH = 'main'
+        GIT_URL = 'https://github.com/vulebaolong/go_gin_be_jenkins'
+        IMAGE_NAME = "${DOCKER_AUTH_USR}/go_gin_be_img:latest"
+        COMPOSE_FILE_DIR = '/home/ubuntu/devops_05'
+        COMPOSE_SERVICE_NAME = 'go_gin_be'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: "${GIT_BRANCH}", credentialsId: 'github-login', url: "${GIT_URL}"
+                sh 'ls -la'
+            }
+        }
+        
+        stage('Build & Push Docker Image') {
+            steps {
+                sh '''
+                    docker build -t ${IMAGE_NAME} .
+                    docker login -u ${DOCKER_AUTH_USR} -p ${DOCKER_AUTH_PSW}
+                    docker push ${IMAGE_NAME}
+                '''
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh '''
+                    ssh -o StrictHostKeyChecking=no -i ${SSH_AUTH} ${SSH_AUTH_USR}@${SSH_IP} "
+                        cd ${COMPOSE_FILE_DIR}
+
+                        docker compose pull ${COMPOSE_SERVICE_NAME}
+
+                        docker compose up -d --force-recreate ${COMPOSE_SERVICE_NAME}
+                    "
+                '''
+            }
+        }
+    }
+}
