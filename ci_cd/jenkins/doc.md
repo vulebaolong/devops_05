@@ -137,3 +137,16 @@ pipeline {
 }
 
 ```
+
+## Phân quyền tạo tài khoản
+
+- 1. cài plungin: Role-based Authorization Strategy
+- 2. Setting -> Security -> Authorization
+    - chuyển Anyone can do anything
+    - thành: Role-based Strategy (plugin mới cài)
+- 3. tạo tài khoản cho member
+- 4. tạo quyền và gắn quyền cho tài khoản
+
+- global
+- item
+- agent - nhiều máy xử lý build
