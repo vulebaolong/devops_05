@@ -1,0 +1,117 @@
+# Ghi chú đổi/thêm domain và source: xem them-domain-source.md cùng thư mục.
+# File gồm Deployment (quản lý Pod), Service, HPA và Ingress.
+# Các lệnh dưới đây chạy từ thư mục gốc repository, dùng namespace default.
+# Sau khi sửa: kubectl apply -n default -f k8s/ok/nodepad-be.yaml
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+    name: nodepad-be # Source mới: đổi tên Deployment, ví dụ nodepad-fe.
+
+spec:
+    replicas: 1
+
+    selector:
+        matchLabels:
+            app: nodepad-be # Đổi đồng bộ với label Pod và selector Service.
+
+    template:
+        metadata:
+            labels:
+                app: nodepad-be # Label Pod phải trùng selector Deployment và Service.
+
+        spec:
+            containers:
+                - name: nodepad-be # Tên container của source mới, ví dụ nodepad-fe.
+                  image: vulebaolong/img-nodepad_be:latest # Đổi sang image đã build/push của source mới.
+                  imagePullPolicy: Always
+
+                  ports:
+                      - containerPort: 8888 # Port app thực sự lắng nghe; FE có thể là 3000 hoặc 80.
+
+                  # Nếu app không dùng env runtime, bỏ cả khối envFrom bên dưới.
+                  envFrom:
+                      - secretRef:
+                            name: nodepad-be-env # Đổi Secret cho source mới và tạo trước khi apply.
+
+                  # Điều chỉnh CPU/RAM theo source mới; HPA CPU cần requests.cpu.
+                  resources:
+                      requests:
+                          # 400m tương đương 0.4 vCPU (40% của 1 CPU core).
+                          cpu: 400m
+                          # 400Mi là RAM, tương đương 400 MiB ≈ 419 MB
+                          memory: 400Mi
+                      limits:
+                          cpu: 400m
+                          memory: 400Mi
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+    name: nodepad-be-service # Source mới: tên Service riêng, ví dụ nodepad-fe-service.
+
+spec:
+    type: ClusterIP
+
+    selector:
+        app: nodepad-be # Phải trùng label Pod của source muốn nhận request.
+
+    ports:
+        - port: 8888 # Port Service; Ingress backend.service.port.number phải trùng giá trị này.
+          targetPort: 8888 # Port app bên trong container, ví dụ FE 3000 hoặc 80.
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+    name: nodepad-be-hpa # Source mới: đổi tên HPA, ví dụ nodepad-fe-hpa.
+spec:
+    scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: nodepad-be # Phải trùng metadata.name của Deployment mới.
+
+    # Điều chỉnh số Pod và ngưỡng CPU theo tải của source mới.
+    minReplicas: 1
+    maxReplicas: 4
+
+    metrics:
+        - type: Resource
+          resource:
+              name: cpu
+              target:
+                  type: Utilization
+                  averageUtilization: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+    name: nodepad-be-ingress # Source mới: đổi tên Ingress, ví dụ nodepad-fe-ingress.
+    namespace: default # Deployment, Service, HPA và các Secret cũng dùng namespace này.
+
+spec:
+    ingressClassName: nginx # Dùng chung controller hiện có cho nhiều source/domain.
+
+    # ĐỔI DOMAIN: sửa cả tls.hosts và rules.host bên dưới.
+    # THÊM DOMAIN: giữ host cũ, thêm host TLS và một rule đầy đủ cho domain mới.
+    # Nếu chứng chỉ khác: thêm mục TLS riêng với secretName tương ứng.
+    tls:
+        - hosts:
+              - nodepad-be.vulebaolong.com
+          secretName: vulebaolong.com # Tên Secret TLS; chứng chỉ phải bao phủ domain đang dùng.
+
+    rules:
+        - host: nodepad-be.vulebaolong.com
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: nodepad-be-service # Phải trùng metadata.name của Service ở trên.
+                            port:
+                                number: 8888 # Phải trùng Service.spec.ports[].port, không phải targetPort.

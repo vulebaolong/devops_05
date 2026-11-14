@@ -82,3 +82,24 @@ kubectl get pod -A
 kubectl top node
 kubectl top pod
 ```
+
+- mang env fe và be lên server
+- nạp env vào k8s
+```bash
+kubectl create secret generic nodepad-fe-env \
+    --from-env-file=.env \
+    --dry-run=client \
+    -o yaml | kubectl apply -f -
+
+# kiểm tra
+kubectl get secret
+```
+
+## run
+- đưa file `nodepad-be.yaml` lên server
+```bash
+kubectl apply -f nodepad-be.yaml
+
+kubectl get pod
+kubectl logs 
+```
