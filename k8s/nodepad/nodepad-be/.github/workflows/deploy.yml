@@ -1,0 +1,103 @@
+name: Deploy
+
+on:
+    workflow_dispatch:
+
+env:
+    IMAGE_NAME: img-nodepad_be
+    IMAGE_TAG: latest
+
+    NODEPAD_USERNAME_DOCKER: vulebaolong
+    NODEPAD_TOKEN_DOCKER: ${{ secrets.NODEPAD_TOKEN_DOCKER }}
+
+    SERVER_HOST_CONTROL_PLANE: ${{ secrets.SERVER_HOST_CONTROL_PLANE }}
+    SERVER_HOST_DATABASE: ${{ secrets.SERVER_HOST_DATABASE }}
+    SERVER_USER: ${{ secrets.SERVER_USER }}
+
+    MIGRATION_DIR: /home/ubuntu/nodepad/migrations
+    NETWORK_NAME: nodepad
+
+jobs:
+    # ==================================================
+    # JOB 1: BUILD VÀ PUSH IMAGE
+    # ==================================================
+    build-push:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout source
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v4
+              with:
+                  username: ${{ env.NODEPAD_USERNAME_DOCKER }}
+                  password: ${{ env.NODEPAD_TOKEN_DOCKER }}
+
+            - name: Build Docker image
+              run: |
+                  docker build -t "$NODEPAD_USERNAME_DOCKER/$IMAGE_NAME:$IMAGE_TAG" .
+
+            - name: Push Docker image
+              run: |
+                  docker push "$NODEPAD_USERNAME_DOCKER/$IMAGE_NAME:$IMAGE_TAG"
+
+    # ==================================================
+    # JOB 2: MIGRATION VÀ DEPLOY
+    # ==================================================
+    migration-deploy:
+        needs: build-push
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout source
+              uses: actions/checkout@v4
+
+            - name: Setup SSH agent
+              uses: webfactory/ssh-agent@v0.9.0
+              with:
+                  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+            - name: Trust servers
+              run: |
+                  mkdir -p ~/.ssh
+                  ssh-keyscan -H $SERVER_HOST_CONTROL_PLANE >> ~/.ssh/known_hosts
+                  ssh-keyscan -H $SERVER_HOST_DATABASE >> ~/.ssh/known_hosts
+
+            - name: Transfer migrations
+              run: |
+                  ssh "$SERVER_USER@$SERVER_HOST_DATABASE" \
+                    "mkdir -p '$MIGRATION_DIR'"
+
+                  scp -r ent/migrate/migrations/. \
+                    "$SERVER_USER@$SERVER_HOST_DATABASE:$MIGRATION_DIR/"
+
+            - name: Get backend environment
+              run: |
+                  scp "$SERVER_USER@$SERVER_HOST_CONTROL_PLANE:/home/ubuntu/k8s/nodepad-be/nodepad-be.env" nodepad-be.env
+
+                  set -a
+                  source nodepad-be.env
+                  set +a
+
+                  echo "DATABASE_DSN=$DATABASE_DSN" >> "$GITHUB_ENV"
+
+            - name: Run database migration
+              run: |
+                  ssh "$SERVER_USER@$SERVER_HOST_DATABASE" \
+                    "NETWORK_NAME='$NETWORK_NAME' DATABASE_DSN='$DATABASE_DSN' MIGRATION_DIR='$MIGRATION_DIR' bash -s" << 'EOF'
+                    sudo docker run --rm \
+                      --network "$NETWORK_NAME" \
+                      -v "$MIGRATION_DIR:/migrations:ro" \
+                      arigaio/atlas:latest \
+                      migrate apply \
+                      --dir file:///migrations \
+                      --url "$DATABASE_DSN"
+                  EOF
+
+            - name: Restart Kubernetes deployment
+              run: |
+                  ssh "$SERVER_USER@$SERVER_HOST_CONTROL_PLANE" << 'EOF'
+                    sudo kubectl rollout restart deployment/nodepad-be
+                    sudo kubectl rollout status deployment/nodepad-be
+                  EOF

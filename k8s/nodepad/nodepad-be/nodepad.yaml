@@ -1,0 +1,435 @@
+basePath: /
+consumes:
+- application/json
+info:
+  version: "1.0"
+paths:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      operationId: authLogin
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+          required:
+          - email
+          - password
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              accessToken:
+                type: string
+              expiresIn:
+                type: integer
+              tokenType:
+                type: string
+              user:
+                properties:
+                  createdAt:
+                    type: string
+                  deletedAt:
+                    type: string
+                  email:
+                    type: string
+                  id:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                - id
+                - email
+                - createdAt
+                - updatedAt
+                - deletedAt
+                type: object
+            type: object
+      schemes:
+      - https
+      summary: Login
+  /api/auth/logout:
+    post:
+      operationId: authLogout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema: {}
+      schemes:
+      - https
+      summary: Logout
+  /api/auth/me:
+    get:
+      operationId: authMe
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              createdAt:
+                type: string
+              deletedAt:
+                type: string
+              email:
+                type: string
+              id:
+                type: string
+              updatedAt:
+                type: string
+            type: object
+      schemes:
+      - https
+      summary: Me
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      operationId: authRegister
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+          required:
+          - email
+          - password
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              accessToken:
+                type: string
+              expiresIn:
+                type: integer
+              tokenType:
+                type: string
+              user:
+                properties:
+                  createdAt:
+                    type: string
+                  deletedAt:
+                    type: string
+                  email:
+                    type: string
+                  id:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                - id
+                - email
+                - createdAt
+                - updatedAt
+                - deletedAt
+                type: object
+            type: object
+      schemes:
+      - https
+      summary: Register
+  /api/notes:
+    get:
+      operationId: noteGetNotes
+      parameters:
+      - allowEmptyValue: true
+        in: query
+        name: page
+        type: integer
+      - allowEmptyValue: true
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              items:
+                items:
+                  properties:
+                    content:
+                      type: string
+                    createdAt:
+                      type: string
+                    deletedAt:
+                      type: string
+                    id:
+                      type: string
+                    shareKey:
+                      type: string
+                    shareUrl:
+                      type: string
+                    title:
+                      type: string
+                    updatedAt:
+                      type: string
+                    userId:
+                      type: string
+                  required:
+                  - id
+                  - userId
+                  - shareKey
+                  - shareUrl
+                  - title
+                  - content
+                  - createdAt
+                  - updatedAt
+                  - deletedAt
+                  type: object
+                type: array
+              page:
+                type: integer
+              pageSize:
+                type: integer
+              totalItems:
+                type: integer
+              totalPages:
+                type: integer
+            type: object
+      schemes:
+      - https
+      summary: GetNotes
+    post:
+      consumes:
+      - application/json
+      operationId: noteCreateNote
+      parameters:
+      - in: header
+        name: Authorization
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            content:
+              type: string
+            title:
+              type: string
+          required:
+          - content
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              content:
+                type: string
+              createdAt:
+                type: string
+              deletedAt:
+                type: string
+              id:
+                type: string
+              shareKey:
+                type: string
+              shareUrl:
+                type: string
+              title:
+                type: string
+              updatedAt:
+                type: string
+              userId:
+                type: string
+            type: object
+      schemes:
+      - https
+      summary: CreateNote
+  /api/notes/{id}:
+    delete:
+      consumes:
+      - application/x-www-form-urlencoded
+      operationId: noteDeleteNote
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              content:
+                type: string
+              createdAt:
+                type: string
+              deletedAt:
+                type: string
+              id:
+                type: string
+              shareKey:
+                type: string
+              shareUrl:
+                type: string
+              title:
+                type: string
+              updatedAt:
+                type: string
+              userId:
+                type: string
+            type: object
+      schemes:
+      - https
+      summary: DeleteNote
+    get:
+      operationId: noteGetNote
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              content:
+                type: string
+              createdAt:
+                type: string
+              deletedAt:
+                type: string
+              id:
+                type: string
+              shareKey:
+                type: string
+              shareUrl:
+                type: string
+              title:
+                type: string
+              updatedAt:
+                type: string
+              userId:
+                type: string
+            type: object
+      schemes:
+      - https
+      summary: GetNote
+    patch:
+      consumes:
+      - application/json
+      operationId: noteUpdateNote
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            content:
+              type: string
+            title:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              content:
+                type: string
+              createdAt:
+                type: string
+              deletedAt:
+                type: string
+              id:
+                type: string
+              shareKey:
+                type: string
+              shareUrl:
+                type: string
+              title:
+                type: string
+              updatedAt:
+                type: string
+              userId:
+                type: string
+            type: object
+      schemes:
+      - https
+      summary: UpdateNote
+  /api/notes/public/{shareKey}:
+    get:
+      operationId: noteGetPublicNote
+      parameters:
+      - in: path
+        name: shareKey
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+          schema:
+            properties:
+              content:
+                type: string
+              createdAt:
+                type: string
+              deletedAt:
+                type: string
+              id:
+                type: string
+              shareKey:
+                type: string
+              shareUrl:
+                type: string
+              title:
+                type: string
+              updatedAt:
+                type: string
+              userId:
+                type: string
+            type: object
+      schemes:
+      - https
+      summary: GetPublicNote
+produces:
+- application/json
+schemes:
+- https
+swagger: "2.0"
+x-date: "2026-07-29 20:36:26"
+x-description: This is a goctl generated swagger file.
+x-github: https://github.com/zeromicro/go-zero
+x-go-zero-doc: https://go-zero.dev/
+x-goctl-version: 1.10.1

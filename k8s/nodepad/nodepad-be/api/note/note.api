@@ -1,0 +1,83 @@
+syntax = "v1"
+
+type (
+    CreateNoteRequest {
+        Authorization string  `header:"Authorization,optional"`
+        Title         *string `json:"title,optional"`
+        Content       string  `json:"content"`
+    }
+
+    GetPublicNoteRequest {
+        ShareKey string `path:"shareKey"`
+    }
+
+    GetNoteRequest {
+        Id string `path:"id"`
+    }
+
+    GetNotesRequest {
+        Page     int `form:"page,optional"`
+        PageSize int `form:"pageSize,optional"`
+    }
+
+    UpdateNoteRequest {
+        Id      string  `path:"id"`
+        Title   *string `json:"title,optional"`
+        Content *string `json:"content,optional"`
+    }
+
+    DeleteNoteRequest {
+        Id string `path:"id"`
+    }
+
+    NoteData {
+        Id        string  `json:"id"`
+        UserId    *string `json:"userId"`
+        ShareKey  string  `json:"shareKey"`
+        ShareUrl  string  `json:"shareUrl"`
+        Title     *string `json:"title"`
+        Content   string  `json:"content"`
+        CreatedAt string  `json:"createdAt"`
+        UpdatedAt string  `json:"updatedAt"`
+        DeletedAt *string `json:"deletedAt"`
+    }
+
+    NoteListResponse {
+        Page       int        `json:"page"`
+        PageSize   int        `json:"pageSize"`
+        TotalItems int        `json:"totalItems"`
+        TotalPages int        `json:"totalPages"`
+        Items      []NoteData `json:"items"`
+    }
+)
+
+@server (
+    prefix: /api
+    group:  note
+)
+service nodepad-api {
+    @handler CreateNote
+    post /notes (CreateNoteRequest) returns (NoteData)
+
+    @handler GetPublicNote
+    get /notes/public/:shareKey (GetPublicNoteRequest) returns (NoteData)
+}
+
+@server (
+    prefix: /api
+    group:  note
+    middleware: CookieAuth
+)
+service nodepad-api {
+    @handler GetNotes
+    get /notes (GetNotesRequest) returns (NoteListResponse)
+
+    @handler GetNote
+    get /notes/:id (GetNoteRequest) returns (NoteData)
+
+    @handler UpdateNote
+    patch /notes/:id (UpdateNoteRequest) returns (NoteData)
+
+    @handler DeleteNote
+    delete /notes/:id (DeleteNoteRequest) returns (NoteData)
+}

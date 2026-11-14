@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# Biến môi trường
+.env
+.env.*
+
+# IDE / hệ điều hành
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+
+# File build và binary
+/nodepad
+/bin
+/dist
+/build
+/tmp
+*.exe
+*.out
+*.test
+
+# Log
+*.log
+logs
+
+# Coverage
+coverage.out
+coverage.html
+.coverage
+
+# Docker
+docker-compose*.yml
+
+# Tài liệu không cần thiết khi build
+README.md

@@ -1,0 +1,7 @@
+syntax = "v1"
+
+import (
+	"auth/auth.api"
+	"note/note.api"
+)
+

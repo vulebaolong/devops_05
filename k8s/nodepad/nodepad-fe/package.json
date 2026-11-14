@@ -1,0 +1,41 @@
+{
+  "name": "nodepad-fe",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/serialize": "^1.3.3",
+    "@emotion/server": "^11.11.0",
+    "@emotion/utils": "^1.4.2",
+    "@mantine/core": "^9.5.0",
+    "@mantine/emotion": "^9.5.0",
+    "@mantine/hooks": "^9.5.0",
+    "@tanstack/react-query": "^5.101.4",
+    "axios": "^1.18.1",
+    "dayjs": "^1.11.21",
+    "next": "16.2.12",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.12",
+    "postcss": "^8.5.23",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

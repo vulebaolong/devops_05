@@ -1,0 +1,57 @@
+syntax = "v1"
+
+type (
+	RegisterRequest {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	LoginRequest {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	AuthUser {
+		Id        string  `json:"id"`
+		Email     string  `json:"email"`
+		CreatedAt string  `json:"createdAt"`
+		UpdatedAt string  `json:"updatedAt"`
+		DeletedAt *string `json:"deletedAt"`
+	}
+	AuthResponse {
+		AccessToken string   `json:"accessToken"`
+		TokenType   string   `json:"tokenType"`
+		ExpiresIn   int64    `json:"expiresIn"`
+		User        AuthUser `json:"user"`
+	}
+	MeResponse {
+		Id        string  `json:"id"`
+		Email     string  `json:"email"`
+		CreatedAt string  `json:"createdAt"`
+		UpdatedAt string  `json:"updatedAt"`
+		DeletedAt *string `json:"deletedAt"`
+	}
+)
+
+@server (
+	prefix: /api
+	group:  auth
+)
+service nodepad-api {
+	@handler Register
+	post /auth/register (RegisterRequest) returns (AuthResponse)
+
+	@handler Login
+	post /auth/login (LoginRequest) returns (AuthResponse)
+
+	@handler Logout
+	post /auth/logout
+}
+
+@server (
+	prefix: /api
+	group:  auth
+	middleware: CookieAuth
+)
+service nodepad-api {
+	@handler Me
+	get /auth/me returns (MeResponse)
+}

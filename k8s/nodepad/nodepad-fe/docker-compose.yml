@@ -1,0 +1,8 @@
+services:
+  nodepad_fe:
+    container_name: nodepad_fe
+    image: vulebaolong/img-nodepad_fe:latest
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env

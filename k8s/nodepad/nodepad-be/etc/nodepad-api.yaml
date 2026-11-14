@@ -1,0 +1,9 @@
+Name: nodepad-api
+Host: ${HOST}
+Port: ${PORT}
+
+DatabaseDSN: ${DATABASE_DSN}
+
+Auth:
+    AccessSecret: ${AUTH_ACCESS_SECRET}
+    AccessExpire: ${AUTH_ACCESS_EXPIRE}
