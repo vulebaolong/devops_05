@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -17,6 +18,12 @@ import (
 )
 
 func main() {
+	go func() {
+		for i := 0; ; i++ {
+			fmt.Println("hello: ", i)
+			time.Sleep(1 * time.Second)
+		}
+	}()
 	godotenv.Load()
 
 	DATABASE_URL := os.Getenv("DATABASE_URL")
