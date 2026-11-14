@@ -70,3 +70,15 @@ kubectl label node ip-172-31-33-217 node-role.kubernetes.io/worker=worker
 
 ## Cài Metric Server
 - để k8s đọc được thông tin máy để scale
+- mang file `metrics-server.yaml` lên control plane
+```bash
+kubectl apply -f metrics-server.yaml
+
+# check
+kubectl get pod -A
+```
+- sau khi cài metric thành công sẽ chạy được 2 cái lệnh
+```bash
+kubectl top node
+kubectl top pod
+```
