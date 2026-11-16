@@ -31,11 +31,13 @@ spec:
 
                   resources:
                       requests:
-                          cpu: 100m
-                          memory: 128Mi
+                          # 400m tương đương 0.4 vCPU (40% của 1 CPU core).
+                          cpu: 400m
+                          # 400Mi là RAM, tương đương 400 MiB ≈ 419 MB
+                          memory: 400Mi
                       limits:
-                          cpu: 500m
-                          memory: 512Mi
+                          cpu: 400m
+                          memory: 400Mi
 
 ---
 apiVersion: v1

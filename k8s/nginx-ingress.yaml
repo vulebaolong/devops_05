@@ -1,0 +1,35 @@
+# Đây là Helm values cho NGINX Ingress Controller dùng chung, không phải manifest kubectl.
+# Đổi/thêm domain: sửa phần Ingress trong nodepad-be.yaml (hoặc file source mới).
+# Thêm source: tạo Deployment/Service/HPA/Ingress riêng; không cần cài controller mới.
+# Xem them-domain-source.md để có ví dụ và lệnh apply.
+# hostNetwork=true: DNS trỏ đến IP public/NAT của node chạy controller, mở TCP 80/443.
+# Không chạy kubectl apply -f nginx-ingress.yaml; file này được truyền cho Helm bằng --values.
+controller:
+    kind: deployment
+    replicaCount: 1
+
+    hostNetwork: true
+    dnsPolicy: ClusterFirstWithHostNet
+
+    nodeSelector:
+        ingress-node: "true"
+
+    tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+
+    service:
+        create: false
+
+    reportIngressStatus:
+        enable: false
+
+    securityContext:
+        appArmorProfile:
+            type: Unconfined
+
+    config:
+        entries:
+            lb-method: "round_robin"
+            # lb-method: "least_conn"
