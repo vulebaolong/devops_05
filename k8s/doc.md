@@ -172,7 +172,7 @@ helm version
 - gắn label=ingres-node=true cho control plane
 ```bash
 kubectl label node [TEN_NODE_CONTROL_PLANE] ingress-node=true --overwrite
-kubectl label node ip-172-31-37-81 ingress-node=true --overwrite
+kubectl label node ip-172-31-46-221 ingress-node=true --overwrite
 
 # lấy tên TEN_NODE_CONTROL_PLANE
 kubectl get node
@@ -337,3 +337,93 @@ seq 1000000 | xargs -P 100 -I '{}' curl -s -o /dev/null \
   -d '{"email":"admin@gmail.com","password":"12345"}' \
   http://<CLUSTER-IP>:8888/api/auth/login
 ```
+
+## Auto Scale Node
+
+### tạo image đã cài sẵn file common.sh
+
+### tạo launch template
+- Launch template name: nodepad_template
+- Auto Scaling guidance: check
+- Application and OS Images (Amazon Machine Image): chọn Image mới tạo bên trên
+- Advance -> kéo xuống cuối cùng -> User data
+```bash
+#!/bin/bash
+
+# LẤY THÔNG TIN EC2
+METADATA_TOKEN=$(curl -sS -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"  http://169.254.169.254/latest/api/token)
+
+INSTANCE_ID=$(curl -sS -H "X-aws-ec2-metadata-token: ${METADATA_TOKEN}" http://169.254.169.254/latest/meta-data/instance-id)
+
+AZ=$(curl -sS -H "X-aws-ec2-metadata-token: ${METADATA_TOKEN}" http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+# CẤU HÌNH PROVIDER ID CHO KUBELET
+echo "KUBELET_EXTRA_ARGS=--provider-id=aws:///$AZ/$INSTANCE_ID" > /etc/default/kubelet
+systemctl start crio
+
+# JOIN KUBERNETES (CẦN CẬP NHẬT)
+# kubeadm token create --ttl 0 --print-join-command
+kubeadm join 172.31.46.221:6443 --token 7zdjf7.vf873japdclwruo2 --discovery-token-ca-cert-hash sha256:9ea74122343a7cf774fe9c05979542b0930ad341e74269723f483d2ab79b519f
+
+systemctl restart kubelet
+```
+
+### tạo Auto Scaling Group (ASG)
+
+- Auto Scaling group name: nodepad-asg
+- Launch template: chọn template mới tạo bên trên
+- Next
+- Availability Zones and subnets: chọn khu vực giống với control plane
+- Next
+- Next
+- Scaling - Max desired capacity: 5
+- Next
+- Next
+- Add tags:
+    - tag 1
+        - key: k8s.io/cluster-autoscaler/enabled
+        - value: true
+        - bỏ check tag new instance
+    - tag 2
+        - key: k8s.io/cluster-autoscaler/nodepad
+        - value: owned
+        - bỏ check tag new instance
+- Next
+- Create
+
+### tạo permission
+
+https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md#iam-policy
+
+- vào doc lấy json
+- dùng json để tạo permission trên aws
+- Next
+- Policy name: nodepad-permission
+- Create
+
+### tạo role
+- Use case: `EC2`
+- Next
+- Gắn luốn permission mới tạo ở trên
+    - chọn Filter by Type: Customer Managed
+    - chọn permission mới tạo ở trên
+- Next
+- Role name: nodepad-role
+- Create
+- đi gắn role vào máy Ec2 `Control plane`
+    - Action
+    - Security
+    - Modify IAM Role
+    - Chọn Role mới tạo
+    - Update
+
+## Cài auto scaling cho control plane
+- worker chạy ngầm theo dõi nếu có pod pending do thiếu tài nguyên
+- sẽ gọi tín hiệu tới ASG
+
+- mang file `cluster-autoscaler-autodiscover.yaml` lên server
+```bash
+kubectl apply -f cluster-autoscaler-autodiscover.yaml
+```
+
+## tăng tải
