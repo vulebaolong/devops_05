@@ -40,7 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /docker-compose/postgres_data
-terraform/create-ec2/.terraform.lock.hcl
-terraform/create-ec2/terraform.tfstate
-terraform/create-ec2/terraform.tfstate.backup
-/terraform/create-ec2/.terraform
+# Terraform downloaded providers, local state, and extracted CLI binaries
+**/.terraform/
+*.tfstate
+*.tfstate.*
+/infrastructure/terraform/terraform_*/

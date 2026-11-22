@@ -114,5 +114,36 @@ docker compose up -d
 
 ### tạo định tuyến
 
+- system
+    - configuration
+    - định tuyến (routing)
+    - Vận chuyển phụ thuộc người gửi
 
+- Máy chủ: smtp-relay.brevo.com:587
+    - (bên brevo)
+    - port 587 bên brevo
+- Tên người dùng: ba8f0b001@smtp-brevo.com (bên brevo)
+
+### Thiết lập chuyển gọi 25 qua bên brevo
+- Email
+    - configuration
+    - Domain
+    - edit vulebaolong.com
+
+- Sender-dependent transports: chọn cái router mới tạo ở trên
+
+## tạo chứ ký
+- Setting
+- Mail: menu bên trái
+- IMAP ACCOUNT: tab
+- click nút edit
+- phần Identities
+
+## tạo footer
+- trang admin
+- Email
+- Configuration
+- Domain
+- Edit vulebaolong.com
+- Chân trang toàn tên miền (tab)
 
