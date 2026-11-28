@@ -92,3 +92,78 @@ terraform init
 terraform validate
 terraform apply
 ```
+## Ansible
+```bash
+docker run --name ubuntu-ansible -d -it -v ./ansible:/root/ansible ubuntu
+
+docker exec -it ubuntu-ansible bash
+```
+
+### install
+- truy cập: https://docs.ansible.com/
+- header: resource
+    - Ansible package documentation
+- menu bên trái:
+    - Installation, Upgrade & Configuration
+        - Installation Guide
+        - Installing Ansible on specific operating systems
+        - Installing Ansible on Ubuntu: https://docs.ansible.com/projects/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu
+
+```bash
+apt update
+apt install software-properties-common
+add-apt-repository --yes --update ppa:ansible/ansible
+apt install ansible
+
+# Geographic area: 5. Asia
+# Time zone: 29. Ho_Chi_Minh
+```
+
+### setting
+
+- Ansible getting started
+    - Getting started with Ansible
+    - Building an inventory: https://docs.ansible.com/projects/ansible/latest/getting_started/get_started_inventory.html#building-an-inventory
+
+- tạo file inventory
+```bash
+ansible-inventory -i inventory.ini --list
+
+ansible myhosts -m ping -i inventory.ini
+# [ERROR]: Task failed: Failed to connect to the host via ssh: Host key verification failed.
+
+# tạo file ansible.cfg
+
+# chạy lại
+ansible myhosts -m ping -i inventory.ini
+# [ERROR]: Task failed: Failed to connect to the host via ssh: Warning: Permanently added '13.212.6.43' (ED25519) to the list of known hosts.
+
+# file inventory.ini
+# [myhosts:vars]
+# ansible_user=ubuntu
+# ansible_ssh_private_key_file=./devops.pem
+
+# chạy lại
+ansible myhosts -m ping -i inventory.ini
+# [WARNING]: Host '18.143.179.34' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+
+# file inventory.ini
+# ansible_python_interpreter=/usr/bin/python3
+
+# 13.212.6.43 | SUCCESS => {
+#     "changed": false,
+#     "ping": "pong"
+# }
+# 18.143.179.34 | SUCCESS => {
+#     "changed": false,
+#     "ping": "pong"
+# }
+```
+
+### playbook
+https://docs.ansible.com/projects/ansible/latest/getting_started/get_started_playbook.html#creating-a-playbook
+
+- run playbook
+```bash
+ansible-playbook -i inventory.ini nginx.yaml
+```

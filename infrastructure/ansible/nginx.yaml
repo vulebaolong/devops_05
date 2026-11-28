@@ -1,0 +1,12 @@
+# ansible-playbook -i inventory.ini nginx.yaml
+
+- name: Install Nginx
+  hosts: myhosts
+  become: true # dùng sudo
+  tasks:
+      - name: Install Nginx
+        become: true # dùng sudo
+        ansible.builtin.apt: # sudo apt install -y
+            name: nginx # sudo apt install -y nginx
+            state: present # đảm bảo nginx phải được cài đặt và tồn tại
+            update_cache: true # sudo apt update

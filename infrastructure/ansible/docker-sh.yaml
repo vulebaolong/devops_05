@@ -1,0 +1,10 @@
+# ansible-playbook -i inventory.ini docker-sh.yaml
+
+- name: Install Docker By File sh
+  hosts: myhosts
+  become: true # dùng sudo
+  tasks:
+      - name: Install Docker By File sh
+        become: true # dùng sudo
+        ansible.builtin.script:
+            cmd: ./docker_install.sh
